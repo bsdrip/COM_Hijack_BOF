@@ -1,0 +1,10 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Release" />
+    <BuildType Name="UnitTest" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="COM_Hijack_BOF/COM_Hijack_BOF.vcxproj" Id="de297fc9-a2ca-4498-b91d-966b316c618f" />
+</Solution>
